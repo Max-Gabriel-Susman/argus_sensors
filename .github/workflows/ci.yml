@@ -10,11 +10,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Use a prebuilt ROS 2 Humble (Jammy) dev image from ros-tooling
+    # Recommended ROS CI base image (Ubuntu 22.04 / Jammy)
     container:
-      image: ghcr.io/ros-tooling/setup-ros-docker/ubuntu-jammy-ros-humble-ros-base
-      # optional but nice for ROS 2 shared memory things; harmless for builds
-      options: --ipc=host
+      image: rostooling/setup-ros-docker:ubuntu-jammy-latest
 
     steps:
       - name: Checkout
