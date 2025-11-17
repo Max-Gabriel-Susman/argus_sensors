@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest   # GitHub’s Jammy runner is fine for Humble
+    runs-on: ubuntu-22.04   # GitHub’s Jammy runner is fine for Humble
 
     steps:
       # 1) Check out your repo
