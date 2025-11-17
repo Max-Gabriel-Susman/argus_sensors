@@ -8,29 +8,23 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04   # GitHub’s Jammy runner is fine for Humble
+    runs-on: ubuntu-latest
+
+    # Use a prebuilt ROS 2 Humble (Jammy) dev image from ros-tooling
+    container:
+      image: ghcr.io/ros-tooling/setup-ros-docker/ubuntu-jammy-ros-humble-ros-base
+      # optional but nice for ROS 2 shared memory things; harmless for builds
+      options: --ipc=host
 
     steps:
-      # 1) Check out your repo
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2) Install ROS dev tools (colcon, rosdep, etc.) + ROS 2 Humble
-      - name: Set up ROS 2
-        uses: ros-tooling/setup-ros@v0.7
-        with:
-          # This installs Humble binaries & dev tooling
-          required-ros-distributions: humble
-
-      # 3) Build and test your ROS 2 package
       - name: Build and test argus_sensors
         uses: ros-tooling/action-ros-ci@v0.4
         with:
-          # Name of your package (from package.xml)
           package-name: argus_sensors
-          # ROS 2 distro to build against
           target-ros2-distro: humble
-          # optional, but good defaults for colcon
           colcon-defaults: |
             {
               "build": {
