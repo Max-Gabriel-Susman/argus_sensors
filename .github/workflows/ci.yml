@@ -1,4 +1,4 @@
-name: ROS 2 CI (argus_sensors)
+name: argus_sensors package CI
 
 on:
   push:
@@ -10,7 +10,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Recommended ROS CI base image (Ubuntu 22.04 / Jammy)
     container:
       image: rostooling/setup-ros-docker:ubuntu-jammy-latest
 
