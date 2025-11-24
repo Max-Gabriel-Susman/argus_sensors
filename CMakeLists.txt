@@ -14,10 +14,10 @@ find_package(sensor_msgs REQUIRED)
 add_executable(camera_node src/camera_node.cpp)
 
 ament_target_dependencies(camera_node
-	rclcpp
-	rclcpp_components
-	class_loader
-	sensor_msgs
+  rclcpp
+  rclcpp_components
+  class_loader
+  sensor_msgs
 )
 
 target_include_directories(camera_node PUBLIC
