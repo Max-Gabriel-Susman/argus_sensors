@@ -10,6 +10,10 @@ This repository contains the sensors package for the Argus perception pipeline
 
 * An installation of ROS 2 Humble 
 
+* An installation of ros-humble-rclcpp-components with apt
+
+* An installation of ros-humble-class-loader with apt
+
 ## Prerequisites
 
 * Creation of a ROS 2 workspace named argus_ws in your home directory
