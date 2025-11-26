@@ -75,7 +75,7 @@ int main(int argc, char ** argv)
       mon_opts.arguments({"--ros-args", "-r", "__node:=rs_monitor"});
 
       NodeInstanceWrapper mon_node = mon_factory->create_node_instance(mon_opts);
-      exec->add_node(mon_node.get_node_base_interface());
+      exec.add_node(mon_node.get_node_base_interface());
       RCLCPP_INFO(rclcpp::get_logger("argus_composed"), "Loaded argus_perception::RsMonitor component.");
     } catch (const std::exception &e) {
       RCLCPP_WARN(rclcpp::get_logger("argus_composed"),
