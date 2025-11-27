@@ -4,9 +4,9 @@
 
 namespace argus_sensors
 {
-    class RsMonitor : public rclcpp::Node
-    {
-        public: 
-            explicit RsMonitor(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
-    };
+class RsMonitor : public rclcpp::Node
+{
+public:
+  explicit RsMonitor(const rclcpp::NodeOptions & options = rclcpp::NodeOptions());
+};
 }
