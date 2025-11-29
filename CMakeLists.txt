@@ -13,6 +13,21 @@ find_package(sensor_msgs REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
 
+
+add_library(argus_sensors_rs_monitor
+  src/rs_monitor.cpp
+)
+target_include_directories(argus_sensors_rs_monitor PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+ament_target_dependencies(argus_sensors_rs_monitor
+  rclcpp
+)
+
+target_link_libraries(camera_node
+  argus_sensors_rs_monitor
+)
+
 ament_target_dependencies(camera_node
   rclcpp
   rclcpp_components
