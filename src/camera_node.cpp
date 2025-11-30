@@ -2,6 +2,7 @@
 #include <rclcpp/executors/multi_threaded_executor.hpp>
 #include <rclcpp_components/node_factory.hpp>
 #include <class_loader/class_loader.hpp>
+#include "argus_sensors/rs_monitor.hpp"
 
 using rclcpp_components::NodeFactory;
 using rclcpp_components::NodeInstanceWrapper;
@@ -52,11 +53,9 @@ int main(int argc, char ** argv)
       {"enable_infra1", true},
       {"enable_infra2", true},
       {"enable_color", true},
-      {"align_depth", true},                   // top-level (legacy) switch; also keep filter-specific one
+      {"align_depth", true},
       {"align_depth.enable", true},
       {"pointcloud.enable", true},
-      // If you really are using the custom "pointcloud__neon_" namespace, keep these as-is.
-      // If not, typical upstream keys are "pointcloud.stream_filter", etc.
       {"pointcloud__neon_.enable", true},
       {"pointcloud__neon_.stream_filter", std::string("color")},
       {"pointcloud__neon_.stream_index_filter", 0},
@@ -66,34 +65,17 @@ int main(int argc, char ** argv)
 
     rs_opts.parameter_overrides(rs_params);
 
-    rs_opts.arguments({"--ros-args", "-r", "__node:=realsense2_camera"});             // set node name
+    rs_opts.arguments({"--ros-args", "-r", "__node:=realsense2_camera"});
     NodeInstanceWrapper rs_node = rs_factory->create_node_instance(rs_opts);
     exec.add_node(rs_node.get_node_base_interface());
 
-    // --- 2) Load your rs_monitor component (if available as a component) ---
-    // Replace with your actual component class name if different:
-    // e.g., "argus_perception::RsMonitor" or "argus_perception::RsMonitorNode"
-    //try {
-    //  auto mon_factory = loader.createSharedInstance("argus_perception::RsMonitor");
-    //  rclcpp::NodeOptions mon_opts;
-    //  mon_opts.use_intra_process_comms(true);
-    //  mon_opts.arguments({"--ros-args", "-r", "__node:=rs_monitor"});
+    // rs_monitor
+    rclcpp::NodeOptions mon_opts;
+    mon_opts.use_intra_process_comms(true);
+    auto mon_node = std::make_shared<argus_sensors::RsMonitor>(mon_opts);
+    exec.add_node(mon_node);
 
-    //  NodeInstanceWrapper mon_node = mon_factory->create_node_instance(mon_opts);
-    //  exec->add_node(mon_node.get_node_base_interface());
-    //  RCLCPP_INFO(rclcpp::get_logger("argus_composed"), "Loaded argus_perception::RsMonitor component.");
-    //} catch (const std::exception &e) {
-    //  RCLCPP_WARN(rclcpp::get_logger("argus_composed"),
-    //    "Could not load argus_perception::RsMonitor as a component (%s). "
-    //    "Build rs_monitor as a composable node or run it as a separate process.",
-    //    e.what());
-    //}
-
-    RCLCPP_INFO(
-      logger,
-      "Loaded RealSense component '%s' from librealsense2_camera.so",
-      target_class.c_str());
-
+    RCLCPP_INFO(logger, "Loaded RealSense component and RsMonitor C++ node.");
     exec.spin();
 
   } catch (const std::exception & e) {
