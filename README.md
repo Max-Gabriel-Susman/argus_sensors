@@ -52,5 +52,20 @@ Run the camera_node you just created:
 ros2 run argus_sensors camera_node
 ```
 
+### D455 camera
 
+Open a second terminal, ssh into the orin nano and run rqt:
+```
+rqt
+```
 
+Select Image View from Plugins > Visualization. 
+
+Once there select /camera/realsense2_camera/depth/image_rect_raw and you should see camera data from the D455 appear in your rqt image view.
+
+## Development
+
+If you need to format your code for this repo's linter:
+```
+ament_uncrustify --reformat path/to/file
+```
