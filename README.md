@@ -42,7 +42,7 @@ Source the workspace's setup file:
 source install/setup.bash
 ```
 
-View what executables you package has, you should now see camera_node: 
+View what executables your package has, you should now see camera_node: 
 ```
 ros2 pkg executables argus_sensors
 ```
