@@ -10,18 +10,28 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(class_loader REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
-
+add_executable(neural_telemetry_receiver_node
+  src/neural_telemetry_receiver.cpp
+)
 
 add_library(argus_sensors_rs_monitor
   src/rs_monitor.cpp
 )
+
 target_include_directories(argus_sensors_rs_monitor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+
 ament_target_dependencies(argus_sensors_rs_monitor
   rclcpp
+)
+
+ament_target_dependencies(neural_telemetry_receiver_node
+  rclcpp
+  std_msgs
 )
 
 target_link_libraries(camera_node
@@ -40,8 +50,11 @@ target_include_directories(camera_node PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_compile_features(camera_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS camera_node
-  DESTINATION lib/${PROJECT_NAME})
+install(TARGETS
+  camera_node
+  neural_telemetry_receiver_node
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
