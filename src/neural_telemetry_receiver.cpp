@@ -3,3 +3,7 @@ class NeuralTelemetryReceiver
 {
 
 };
+
+int main()
+{
+}
