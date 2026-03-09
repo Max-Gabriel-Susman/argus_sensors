@@ -25,16 +25,16 @@ public:
       input_topic_,
       qos,
       std::bind(
-	&NeuralTelemetryReceiver::telemetry_callback,
-	this,
-	std::placeholders::_1));
+        &NeuralTelemetryReceiver::telemetry_callback,
+        this,
+        std::placeholders::_1));
 
     RCLCPP_INFO(
       this->get_logger(),
       "neural_telemetry_receiver listening on '%s' and publishing to '%s'",
       input_topic_.c_str(),
       output_topic_.c_str());
- } 
+  }
 
 private:
   void telemetry_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
@@ -42,9 +42,9 @@ private:
     if (msg->data.empty()) {
       RCLCPP_WARN_THROTTLE(
         this->get_logger(),
-	*this->get_clock(),
-	5000,
-	"Received empty neural telemetry frame");
+        *this->get_clock(),
+        5000,
+        "Received empty neural telemetry frame");
       return;
     }
 
@@ -67,7 +67,7 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr subscription_;
 };
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<NeuralTelemetryReceiver>());
