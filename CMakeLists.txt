@@ -11,6 +11,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(class_loader REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(argus_core REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
 add_executable(neural_telemetry_receiver_node
@@ -32,6 +33,7 @@ ament_target_dependencies(argus_sensors_rs_monitor
 ament_target_dependencies(neural_telemetry_receiver_node
   rclcpp
   std_msgs
+  argus_core
 )
 
 target_link_libraries(camera_node
