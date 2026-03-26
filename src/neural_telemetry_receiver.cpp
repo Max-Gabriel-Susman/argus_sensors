@@ -1,9 +1,9 @@
-// neural_telemetry_receiver.cpp
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/float32_multi_array.hpp"
+#include "argus_core/msg/neural_frame.hpp"
 
 class NeuralTelemetryReceiver : public rclcpp::Node
 {
@@ -12,17 +12,17 @@ public:
   : Node("neural_telemetry_receiver")
   {
     input_topic_ = this->declare_parameter<std::string>(
-      "input_topic", "/argus/neural_interface/telemetry");
+      "input_topic", "/argus/neural_interface_bridge/neural_data");
 
     output_topic_ = this->declare_parameter<std::string>(
       "output_topic", "/argus/sensors/neural_telemetry");
 
     auto qos = rclcpp::SensorDataQoS();
 
-    publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>(
+    publisher_ = this->create_publisher<argus_core::msg::NeuralFrame>(
       output_topic_, qos);
 
-    subscription_ = this->create_subscription<std_msgs::msg::Float32MultiArray>(
+    subscription_ = this->create_subscription<argus_core::msg::NeuralFrame>(
       input_topic_,
       qos,
       std::bind(
@@ -38,9 +38,9 @@ public:
   }
 
 private:
-  void telemetry_callback(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
+  void telemetry_callback(const argus_core::msg::NeuralFrame::SharedPtr msg)
   {
-    if (msg->data.empty()) {
+    if (msg->channel_count == 0) {
       RCLCPP_WARN_THROTTLE(
         this->get_logger(),
         *this->get_clock(),
@@ -49,23 +49,30 @@ private:
       return;
     }
 
-    auto out_msg = std_msgs::msg::Float32MultiArray();
-    out_msg.layout = msg->layout;
-    out_msg.data = msg->data;
+    if (msg->channel_count > 96) {
+      RCLCPP_WARN_THROTTLE(
+        this->get_logger(),
+        *this->get_clock(),
+        5000,
+        "Received invalid neural telemetry frame: channel_count=%u",
+        msg->channel_count);
+      return;
+    }
 
-    publisher_->publish(out_msg);
+    publisher_->publish(*msg);
 
     RCLCPP_DEBUG(
       this->get_logger(),
-      "Republished neural telemetry fram with %zu values",
-      out_msg.data.size());
+      "Republished neural telemetry frame sample=%u with %u channels",
+      msg->sample,
+      msg->channel_count);
   }
 
   std::string input_topic_;
   std::string output_topic_;
 
-  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr publisher_;
-  rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr subscription_;
+  rclcpp::Publisher<argus_core::msg::NeuralFrame>::SharedPtr publisher_;
+  rclcpp::Subscription<argus_core::msg::NeuralFrame>::SharedPtr subscription_;
 };
 
 int main(int argc, char ** argv)
