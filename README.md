@@ -69,3 +69,9 @@ If you need to format your code for this repo's linter:
 ```
 ament_uncrustify --reformat path/to/file
 ```
+
+## Nodes
+
+### Neural Telemetry Receiver Node
+
+The neural Telemetry Receiver Node subscribes to the topics published by the argus neural interface bridge micro ros node.
