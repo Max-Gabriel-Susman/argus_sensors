@@ -72,6 +72,12 @@ ament_uncrustify --reformat path/to/file
 
 ## Nodes
 
+The `argus_sensors` package provides the nodes used to interact with the Argus sensor array; including the camera node and the neural telemetry receiver node.
+
 ### Neural Telemetry Receiver Node
 
 The neural Telemetry Receiver Node subscribes to the topics published by the argus neural interface bridge micro ros node.
+
+### Camera Node
+
+The camera node interfaces with a RealSense D455 camera to provide depth, image, and color detection to Argus.
