@@ -12,10 +12,14 @@ find_package(class_loader REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(argus_core REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
 add_executable(neural_telemetry_receiver_node
   src/neural_telemetry_receiver.cpp
+)
+add_executable(neural_telemetry_replay
+  src/neural_telemetry_replay.cpp
 )
 
 add_library(argus_sensors_rs_monitor
@@ -34,6 +38,7 @@ ament_target_dependencies(neural_telemetry_receiver_node
   rclcpp
   std_msgs
   argus_core
+  ament_index_cpp
 )
 
 target_link_libraries(camera_node
@@ -55,6 +60,7 @@ target_compile_features(camera_node PUBLIC c_std_99 cxx_std_17)  # Require C99 a
 install(TARGETS
   camera_node
   neural_telemetry_receiver_node
+  neural_telemetry_replay
   DESTINATION lib/${PROJECT_NAME}
 )
 
