@@ -57,6 +57,9 @@ target_include_directories(camera_node PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_compile_features(camera_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
+install(DIRECTORY include/ DESTINATION include)
+ament_export_include_directories(include)
+
 install(TARGETS
   camera_node
   neural_telemetry_receiver_node
