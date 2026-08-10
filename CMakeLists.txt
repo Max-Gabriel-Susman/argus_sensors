@@ -15,16 +15,11 @@ find_package(argus_core REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
-add_executable(neural_telemetry_receiver_node
-  src/neural_telemetry_receiver.cpp
-)
-add_executable(neural_telemetry_replay
-  src/neural_telemetry_replay.cpp
-)
+add_executable(neural_telemetry_receiver_node src/neural_telemetry_receiver.cpp)
+add_executable(neural_telemetry_replay src/neural_telemetry_replay.cpp)
+add_executable(neural_udp_receiver src/neural_udp_receiver.cpp)
 
-add_library(argus_sensors_rs_monitor
-  src/rs_monitor.cpp
-)
+add_library(argus_sensors_rs_monitor src/rs_monitor.cpp)
 
 target_include_directories(argus_sensors_rs_monitor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -34,17 +29,6 @@ ament_target_dependencies(argus_sensors_rs_monitor
   rclcpp
 )
 
-ament_target_dependencies(neural_telemetry_receiver_node
-  rclcpp
-  std_msgs
-  argus_core
-  ament_index_cpp
-)
-
-target_link_libraries(camera_node
-  argus_sensors_rs_monitor
-)
-
 ament_target_dependencies(camera_node
   rclcpp
   rclcpp_components
@@ -52,10 +36,31 @@ ament_target_dependencies(camera_node
   sensor_msgs
 )
 
+ament_target_dependencies(neural_telemetry_receiver_node
+  rclcpp
+  std_msgs
+  argus_core
+)
+
+ament_target_dependencies(neural_telemetry_replay
+  rclcpp
+  argus_core
+  ament_index_cpp
+)
+
+ament_target_dependencies(neural_udp_receiver
+  rclcpp
+  argus_core
+)
+
+target_link_libraries(camera_node
+  argus_sensors_rs_monitor
+)
+
 target_include_directories(camera_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(camera_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(camera_node PUBLIC c_std_99 cxx_std_17)
 
 install(DIRECTORY include/ DESTINATION include)
 ament_export_include_directories(include)
@@ -64,6 +69,7 @@ install(TARGETS
   camera_node
   neural_telemetry_receiver_node
   neural_telemetry_replay
+  neural_udp_receiver
   DESTINATION lib/${PROJECT_NAME}
 )
 
