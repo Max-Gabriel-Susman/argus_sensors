@@ -65,6 +65,13 @@ Once there select /camera/realsense2_camera/depth/image_rect_raw and you should 
 
 ## Development
 
+Check formatting with:
+```
+ament_uncrustify src include
+ament_lint_cmake CMakeLists.txt
+ament_xmllint package.xml
+```
+
 If you need to format your code for this repo's linter:
 ```
 ament_uncrustify --reformat path/to/file

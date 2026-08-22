@@ -54,12 +54,12 @@ ament_target_dependencies(neural_udp_receiver
 )
 
 # ament_target_dependencies does not propagate all exported include
-# directories from argus_core; add them explicilitly so argus_wire.h 
+# directories from argus_core; add them explicilitly so argus_wire.h
 # and the generated NeuralFrame headers resolve.
 target_include_directories(neural_telemetry_receiver_node PRIVATE
   ${argus_core_INCLUDE_DIRS}
 )
-target_include_directories(neural_telemetry_receiver PRIVATE
+target_include_directories(neural_telemetry_replay PRIVATE
   ${argus_core_INCLUDE_DIRS}
 )
 target_include_directories(neural_udp_receiver PRIVATE
