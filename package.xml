@@ -3,7 +3,7 @@
 <package format="3">
   <name>argus_sensors</name>
   <version>0.0.0</version>
-  <description>This package contains the sensor nodes for the Argus perception pipeline.</description>
+  <description>This package contains the sensor nodes for the Argus Cybernetics Stack.</description>
   <maintainer email="gabe.susman@gmail.com">Max Gabriel Susman</maintainer>
   <license>Apache-2.0</license>
 
@@ -11,8 +11,9 @@
 
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
-  <depend>pluginlib</depend>
+  <depend>class_loader</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>argus_core</depend>
   <depend>ament_index_cpp</depend>
  

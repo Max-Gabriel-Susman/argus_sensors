@@ -22,6 +22,7 @@ jobs:
         with:
           package-name: argus_sensors
           target-ros2-distro: humble
+          vcs-repo-file-url: ${{ github.workspace }}/argus_sensors.repos
           colcon-defaults: |
             {
               "build": {
