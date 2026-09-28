@@ -117,6 +117,7 @@ private:
 
     for (size_t i = 0; i < 96; ++i) {
       msg.channels[i] = static_cast<uint16_t>(std::stoul(fields[i + 2]));
+      msg.power[i] = 0;  // the CSV carries counts only
     }
 
     return true;

@@ -63,6 +63,7 @@ target_include_directories(neural_telemetry_replay PRIVATE
   ${argus_core_INCLUDE_DIRS}
 )
 target_include_directories(neural_udp_receiver PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${argus_core_INCLUDE_DIRS}
 )
 
@@ -91,6 +92,14 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_neural_frame_parse test/test_neural_frame_parse.cpp)
+  target_include_directories(test_neural_frame_parse PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${argus_core_INCLUDE_DIRS}
+  )
+  ament_target_dependencies(test_neural_frame_parse argus_core)
 endif()
 
 ament_package()

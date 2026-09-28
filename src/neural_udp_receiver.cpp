@@ -3,15 +3,14 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <algorithm>
 #include <cerrno>
-#include <cstddef>
 #include <cstring>
 #include <stdexcept>
 #include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "argus_core/msg/neural_frame.hpp"
+#include "argus_sensors/neural_frame_parse.hpp"
 #include "argus_wire.h"
 
 class NeuralUdpReceiver : public rclcpp::Node
@@ -73,42 +72,34 @@ public:
 private:
   void drain()
   {
-    argus_frame_packet_t pkt;
+    // Larger than any frame, so an oversized datagram shows up as one
+    // rather than being silently truncated to a plausible length.
+    uint8_t buf[2048];
     while (true) {
-      ssize_t n = recv(sock_, &pkt, sizeof(pkt), 0);
+      ssize_t n = recv(sock_, buf, sizeof(buf), 0);
       if (n < 0) {
         return;  // EAGAIN - nothing left
       }
-      if (n != static_cast<ssize_t>(sizeof(pkt))) {
-        bad_size_++;
-        continue;
-      }
-      if (pkt.magic != ARGUS_FRAME_MAGIC) {
-        bad_magic_++;
-        continue;
-      }
-      if (pkt.version != ARGUS_FRAME_VERSION) {
-        bad_ver_++;
-        continue;
-      }
-
-      uint16_t want = crc16_ccitt(
-        reinterpret_cast<const uint8_t *>(&pkt),
-        offsetof(argus_frame_packet_t, crc));
-      if (want != pkt.crc) {
-        bad_crc_++;
-        continue;
-      }
 
       argus_core::msg::NeuralFrame msg;
-      msg.sample = pkt.sample;
-      msg.t = pkt.t;
-      msg.channel_count = std::min<uint16_t>(pkt.channel_count, ARGUS_MAX_CHANNELS);
-      for (size_t i = 0; i < ARGUS_MAX_CHANNELS; ++i) {
-        msg.channels[i] = pkt.channels[i];
+      switch (argus_sensors::parse_frame(buf, static_cast<size_t>(n), msg)) {
+        case argus_sensors::FrameParse::ok:
+          pub_->publish(msg);
+          good_++;
+          break;
+        case argus_sensors::FrameParse::bad_size:
+          bad_size_++;
+          break;
+        case argus_sensors::FrameParse::bad_magic:
+          bad_magic_++;
+          break;
+        case argus_sensors::FrameParse::bad_ver:
+          bad_ver_++;
+          break;
+        case argus_sensors::FrameParse::bad_crc:
+          bad_crc_++;
+          break;
       }
-      pub_->publish(msg);
-      good_++;
     }
   }
 
