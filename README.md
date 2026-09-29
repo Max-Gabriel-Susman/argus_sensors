@@ -2,7 +2,15 @@
 
 This repository contains the sensors package for the Argus perception pipeline
 
+The whole stack, and the one command that runs it on the board, is described in
+[argus_bringup/README.md](https://github.com/Max-Gabriel-Susman/argus_bringup/blob/main/README.md).
+Build and test this package from `~/Documents/argus_ws` with
+`colcon build --packages-select argus_sensors && colcon test --packages-select argus_sensors`.
+
 ## System Requirements
+
+The neural nodes run on any ROS 2 Humble host; in the running stack that is the
+workstation wired to the Arty Z7. The camera node needs:
 
 * Nvidia Orin Nano Super Developer Kit
 
@@ -81,9 +89,25 @@ ament_uncrustify --reformat path/to/file
 
 The `argus_sensors` package provides the nodes used to interact with the Argus sensor array; including the camera node and the neural telemetry receiver node.
 
+### Neural UDP Receiver
+
+`neural_udp_receiver` binds UDP :5005 and parses the firmware's frames
+(`argus_core/argus_wire.h`, frame version 3: crossing counts and spike-band
+power for 96 channels per 50 ms bin). It checks size, magic, version and
+CRC and publishes each good frame as `argus_core/NeuralFrame` on
+`/argus/neural_interface_bridge/neural_data`. It rejects frames of any other
+version, so the host and the firmware must both be v3. It logs
+`frames ok=N size= magic= ver= crc=` rejection counts. `hwtest.sh` judges
+on this line.
+
 ### Neural Telemetry Receiver Node
 
-The neural Telemetry Receiver Node subscribes to the topics published by the argus neural interface bridge micro ros node.
+The neural Telemetry Receiver Node subscribes to `/argus/neural_interface_bridge/neural_data` and republishes the frames on `/argus/sensors/neural_telemetry`, where `inference_node` reads them.
+
+### Neural Telemetry Replay
+
+`neural_telemetry_replay` publishes binned counts from `data/neural_96.csv` on `/argus/neural_interface_bridge/neural_data`
+without any hardware, for testing the host side on its own.
 
 ### Camera Node
 
